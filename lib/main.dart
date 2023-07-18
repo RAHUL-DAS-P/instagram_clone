@@ -1,13 +1,27 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/responsive/mobile_screen.dart';
 import 'package:instagram_clone/responsive/resposive_layout_screen.dart';
 import 'package:instagram_clone/responsive/web_screen.dart';
+import 'package:instagram_clone/screens/login_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyBX6Tw18pbYAdQ5DdVN1MzxioB0dTVndB0",
+        appId: "1:520560154849:web:eeec4cd9328b8c89693fa0",
+        messagingSenderId: "520560154849",
+        projectId: "instagramclone-868d1",
+        storageBucket: "instagramclone-868d1.appspot.com",
+      ),
+    );
+  } else {
+    await Firebase.initializeApp();
+  }
   runApp(const MyApp());
 }
 
@@ -23,12 +37,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: mobileBackgroundColor,
       ),
-      home: const Scaffold(
-        body: ResponsiveLayout(
-          mobileScreenLayout: MobileScreen(),
-          webScreenLayout: WebScreen(),
-        ),
-      ),
+      // home: const Scaffold(
+      //   body: ResponsiveLayout(
+      //     mobileScreenLayout: MobileScreen(),
+      //     webScreenLayout: WebScreen(),
+      //   ),
+      // ),
+      home: const LoginScreen(),
     );
   }
 }
