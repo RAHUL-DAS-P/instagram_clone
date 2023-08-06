@@ -1,1 +1,0 @@
-int webScreenSize = 600;
