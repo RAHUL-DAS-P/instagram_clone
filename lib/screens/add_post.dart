@@ -24,7 +24,7 @@ class _AddPostState extends State<AddPost> {
 
   final TextEditingController _descriptionController = TextEditingController();
 
-  void clearFile() {
+  void _clearFile() {
     setState(() {
       _file = null;
     });
@@ -42,7 +42,7 @@ class _AddPostState extends State<AddPost> {
         setState(() {
           _isLoading = false;
         });
-        clearFile();
+        _clearFile();
       } else {
         showSnackBar(res, context);
         setState(() {
@@ -118,11 +118,11 @@ class _AddPostState extends State<AddPost> {
         : Scaffold(
             appBar: AppBar(
               backgroundColor: mobileBackgroundColor,
-              leading: const IconButton(
-                icon: Icon(
+              leading: IconButton(
+                icon: const Icon(
                   Icons.arrow_back,
                 ),
-                onPressed: null,
+                onPressed: _clearFile,
               ),
               title: const Text("Post to"),
               centerTitle: false,
@@ -149,9 +149,10 @@ class _AddPostState extends State<AddPost> {
                       )
                     : const Padding(
                         padding: EdgeInsets.only(
-                          top: 0,
+                          top: 0.0,
                         ),
                       ),
+                const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
