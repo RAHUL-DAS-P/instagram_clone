@@ -20,20 +20,40 @@ class AddPost extends StatefulWidget {
 
 class _AddPostState extends State<AddPost> {
   Uint8List? _file;
+  bool _isLoading = false;
 
   final TextEditingController _descriptionController = TextEditingController();
 
+  void clearFile() {
+    setState(() {
+      _file = null;
+    });
+  }
+
   void postImage(String uid, String profImage, String username) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       String res = await FireStoreMethods().uploadImage(
           username, _descriptionController.text, _file!, uid, profImage);
       if (res == "Success") {
         showSnackBar("Success", context);
+        setState(() {
+          _isLoading = false;
+        });
+        clearFile();
       } else {
         showSnackBar(res, context);
+        setState(() {
+          _isLoading = false;
+        });
       }
     } catch (e) {
       showSnackBar(e.toString(), context);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -123,6 +143,15 @@ class _AddPostState extends State<AddPost> {
             ),
             body: Column(
               children: [
+                _isLoading
+                    ? const LinearProgressIndicator(
+                        color: Colors.blueAccent,
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(
+                          top: 0,
+                        ),
+                      ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
