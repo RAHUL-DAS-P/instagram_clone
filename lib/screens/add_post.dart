@@ -1,5 +1,5 @@
 import 'dart:typed_data';
-import 'package:instagram_clone/responsive/firestore_methods.dart';
+import 'package:instagram_clone/resources/firestore_methods.dart';
 
 import '../models/user.dart' as model;
 

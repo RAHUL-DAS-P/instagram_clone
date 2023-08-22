@@ -60,9 +60,8 @@ class _MobileScreenState extends State<MobileScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _selectedIndex = 2;
+    _selectedIndex = 0;
   }
 
   void navTapped(int page) {
