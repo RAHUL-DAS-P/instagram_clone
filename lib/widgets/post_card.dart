@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user.dart';
 import 'package:instagram_clone/providers/user_provider.dart';
 import 'package:instagram_clone/resources/firestore_methods.dart';
+import 'package:instagram_clone/screens/comments_screen.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -117,9 +118,13 @@ class _PostCardState extends State<PostCard> {
                         color: Color.fromARGB(255, 255, 255, 255),
                       ),
               ),
-              const IconButton(
-                onPressed: null,
-                icon: Icon(
+              IconButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CommentScreen(),
+                  ),
+                ),
+                icon: const Icon(
                   Icons.comment_outlined,
                   color: Colors.white,
                 ),
