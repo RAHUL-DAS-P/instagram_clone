@@ -22,52 +22,60 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: mobileBackgroundColor,
-          title: TextFormField(
-            controller: cont,
-            decoration: const InputDecoration(labelText: "Serach for a user"),
-            onFieldSubmitted: (String username) {
-              setState(
-                () {
-                  _isUsers = true;
-                },
-              );
-            },
-          ),
+      appBar: AppBar(
+        backgroundColor: mobileBackgroundColor,
+        title: TextFormField(
+          controller: cont,
+          decoration: const InputDecoration(labelText: "Serach for a user"),
+          onFieldSubmitted: (String username) {
+            setState(
+              () {
+                _isUsers = true;
+              },
+            );
+          },
         ),
-        body: _isUsers
-            ? FutureBuilder(
-                future: FirebaseFirestore.instance
-                    .collection("users")
-                    .where(
-                      "username",
-                      isGreaterThanOrEqualTo: cont.text,
-                    )
-                    .get(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-
-                  return ListView.builder(
-                    itemBuilder: (context, index) => ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            (snapshot.data! as dynamic).docs[index]
-                                ['photoUrl']),
-                      ),
-                      title: Text(
-                          (snapshot.data! as dynamic).docs[index]["username"]),
-                    ),
-                    itemCount: (snapshot.data! as dynamic).docs.length,
+      ),
+      body: _isUsers
+          ? FutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection("users")
+                  .where(
+                    "username",
+                    isGreaterThanOrEqualTo: cont.text,
+                  )
+                  .get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
-                },
-              )
-            : Center(
-                child: Text("posts"),
-              ));
+                }
+
+                return ListView.builder(
+                  itemBuilder: (context, index) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                          (snapshot.data! as dynamic).docs[index]['photoUrl']),
+                    ),
+                    title: Text(
+                        (snapshot.data! as dynamic).docs[index]["username"]),
+                  ),
+                  itemCount: (snapshot.data! as dynamic).docs.length,
+                );
+              },
+            )
+          : FutureBuilder(
+              future: FirebaseFirestore.instance.doc("posts").get(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return 
+              },
+            ),
+    );
   }
 }
