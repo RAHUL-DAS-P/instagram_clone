@@ -36,16 +36,22 @@ class _PostCardState extends State<PostCard> {
           .doc(widget.snap["postId"])
           .collection("comments")
           .get();
-      commentCount = datax.docs.length;
+
+      if (mounted) {
+        // Check if the widget is still mounted
+        setState(() {
+          commentCount = datax.docs.length;
+        });
+      }
     } catch (e) {
       showSnackBar(e.toString(), context);
     }
-    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context, listen: false).getUser;
+
     return Container(
       color: mobileBackgroundColor,
       padding: const EdgeInsets.symmetric(vertical: 10),

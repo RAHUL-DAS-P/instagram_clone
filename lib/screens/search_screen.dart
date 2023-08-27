@@ -4,86 +4,97 @@ import 'package:instagram_clone/utils/colors.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  const SearchScreen({Key? key}) : super(key: key);
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  bool _isUsers = false;
-  final TextEditingController cont = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-    cont.dispose();
-  }
+  final TextEditingController searchController = TextEditingController();
+  bool isShowUsers = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: mobileBackgroundColor,
-        title: TextFormField(
-          controller: cont,
-          decoration: const InputDecoration(labelText: "Serach for a user"),
-          onFieldSubmitted: (String username) {
-            setState(
-              () {
-                _isUsers = true;
-              },
-            );
-          },
+        title: Form(
+          child: TextFormField(
+            controller: searchController,
+            decoration:
+                const InputDecoration(labelText: 'Search for a user...'),
+            onFieldSubmitted: (String _) {
+              setState(() {
+                isShowUsers = true;
+              });
+            },
+          ),
         ),
       ),
-      body: _isUsers
+      body: isShowUsers
           ? FutureBuilder(
               future: FirebaseFirestore.instance
-                  .collection("users")
+                  .collection('users')
                   .where(
-                    "username",
-                    isGreaterThanOrEqualTo: cont.text,
+                    'username',
+                    isGreaterThanOrEqualTo: searchController.text,
                   )
                   .get(),
               builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                return ListView.builder(
+                  itemCount: (snapshot.data! as dynamic).docs.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Center(
+                            child: Text("data"),
+                          ),
+                        ),
+                      ),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                            (snapshot.data! as dynamic).docs[index]['photoUrl'],
+                          ),
+                          radius: 16,
+                        ),
+                        title: Text(
+                          (snapshot.data! as dynamic).docs[index]['username'],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            )
+          : FutureBuilder(
+              future: FirebaseFirestore.instance
+                  .collection('posts')
+                  .orderBy('datePublished')
+                  .get(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
                   return const Center(
                     child: CircularProgressIndicator(),
                   );
                 }
 
-                return ListView.builder(
-                  itemBuilder: (context, index) => ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                          (snapshot.data! as dynamic).docs[index]['photoUrl']),
-                    ),
-                    title: Text(
-                        (snapshot.data! as dynamic).docs[index]["username"]),
-                  ),
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                );
-              },
-            )
-          : FutureBuilder(
-              future: FirebaseFirestore.instance.doc("posts").get(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
                 return MasonryGridView.count(
                   crossAxisCount: 3,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  itemBuilder: (context, index) => StaggeredGridTile.count(
-                    crossAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                    mainAxisCellCount: (index % 7 == 0) ? 2 : 1,
-                    child: Image.network(
-                        (snapshot.data! as dynamic).docs[index]["photoUrl"]),
+                  itemCount: (snapshot.data! as dynamic).docs.length,
+                  itemBuilder: (context, index) => Image.network(
+                    (snapshot.data! as dynamic).docs[index]['postUrl'],
+                    fit: BoxFit.cover,
                   ),
+                  mainAxisSpacing: 8.0,
+                  crossAxisSpacing: 8.0,
                 );
               },
             ),
