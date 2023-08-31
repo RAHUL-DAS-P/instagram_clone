@@ -31,18 +31,17 @@ class _PostCardState extends State<PostCard> {
 
   void getComments() async {
     try {
-      QuerySnapshot datax = await FirebaseFirestore.instance
+      QuerySnapshot commentCollection = await FirebaseFirestore.instance
           .collection("posts")
           .doc(widget.snap["postId"])
           .collection("comments")
           .get();
 
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          commentCount = datax.docs.length;
-        });
-      }
+          if (mounted) {
+            setState(() {
+              commentCount = commentCollection.docs.length;
+            });
+          }
     } catch (e) {
       showSnackBar(e.toString(), context);
     }
